@@ -1,12 +1,16 @@
 ﻿using System.Reflection;
 using AutoMapper;
+using Notes.API.Application.Notes.Queries.GetNoteDetailsQuery;
+using Notes.API.Domain;
 
 namespace Notes.API.Application.Common.Mapping;
 
 public class AssemblyMappingProfile : Profile
 {
-    public AssemblyMappingProfile(Assembly assembly) =>
+    public AssemblyMappingProfile(Assembly assembly)
+	{
 		ApplyMappingsFromAssembly(assembly);
+	}
 
 	private void ApplyMappingsFromAssembly(Assembly assembly)
 	{
