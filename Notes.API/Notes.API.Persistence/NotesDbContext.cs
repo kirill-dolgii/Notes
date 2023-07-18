@@ -7,7 +7,7 @@ namespace Notes.API.Persistence;
 
 public sealed class NotesDbContext : DbContext, INotesDbContext
 {
-	public DbSet<Note> Notes { get; set; }
+	public DbSet<Note> Notes { get; set; } = null!;
 	public NotesDbContext(DbContextOptions<NotesDbContext> options) : base(options) {}
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

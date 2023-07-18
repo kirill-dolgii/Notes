@@ -14,7 +14,7 @@ public class UpdateNoteCommandHandler : IRequestHandler<UpdateNoteCommand>
 	}
 
 	public async Task Handle(UpdateNoteCommand request, 
-								   CancellationToken cancellationToken)
+							 CancellationToken cancellationToken)
 	{
 		var note = await _context.Notes.FirstOrDefaultAsync(note => note.Id == request.Id, 
 															cancellationToken);
@@ -25,6 +25,8 @@ public class UpdateNoteCommandHandler : IRequestHandler<UpdateNoteCommand>
 
 		note.Title = request.Title;
 		note.Description = request.Description;
+		note.Category = request.Category;
+		note.Tags = request.Tags;
 		note.EditionTime = DateTime.Now;
 
 		await _context.SaveChangesAsync(cancellationToken);

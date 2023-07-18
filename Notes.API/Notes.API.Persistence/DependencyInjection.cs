@@ -10,12 +10,15 @@ public static class DependencyInjection
 	public static IServiceCollection AddPersistence(this IServiceCollection services, 
 													IConfiguration configuration)
 	{
-		var connectionString = configuration["DbConnection"];
-		services.AddDbContext<NotesDbContext>(options =>
+		services.AddDbContext<NotesDbContext>(ops =>
 		{
-			options.UseSqlite(connectionString);
-
+			ops.UseSqlServer(configuration.GetConnectionString("SalesDb"), 
+							 opsBuilder =>
+							 {
+								 opsBuilder.MigrationsAssembly("Notes.API.WebAPI");
+							 });
 		});
+
 		services.AddScoped<INotesDbContext>(provider => provider.GetService<NotesDbContext>()!);
 		return services;
 	}

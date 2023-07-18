@@ -2,22 +2,13 @@
 
 public class Note
 {
-    public Guid      UserId       { get; }
-    public Guid      Id           { get; }
-    public string    Title        {get;  set; }
-    public string    Description  { get; set; }
-    public DateTime  CreationTime { get; }
-	public DateTime? EditionTime  { get; set; }
-    public DateTime? DeletionTime { get; set; }
-
-	public Note(Guid userId, string title, string description)
-	{
-		UserId = userId;
-        Id = Guid.NewGuid();
-        Title = title;
-        Description = description;
-        CreationTime = DateTime.Now;
-		EditionTime = null;
-        DeletionTime = null;
-	}
+    public Guid                UserId       { get; set; }
+    public Guid                Id           { get; set; }
+    public string              Title        {get;  set; }
+    public string              Description  { get; set; }
+    public Category            Category     { get; set; }
+    public ICollection<string> Tags         { get; set; }
+    public DateTime            CreationTime { get; set; }
+	public DateTime?           EditionTime  { get; set; }
+	public DateTime?           DeletionTime { get; set; }
 }

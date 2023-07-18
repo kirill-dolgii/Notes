@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
 using AutoMapper;
-using Notes.API.Application.Notes.Queries.GetNoteDetailsQuery;
-using Notes.API.Domain;
 
 namespace Notes.API.Application.Common.Mapping;
 
