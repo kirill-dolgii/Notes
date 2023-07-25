@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Notes.API.Application.Interfaces;
@@ -19,10 +20,12 @@ public class GetNotesListQueryHandler : IRequestHandler<GetNotesListQuery, NoteL
 										 CancellationToken cancellationToken)
 	{
 		var notes = await _context.Notes.Where(note => note.UserId == request.UserId)
-								  .Select(note => _mapper.Map<NoteLookUpDto>(note))
+								  .ProjectTo<NoteLookUpDto>(_mapper.ConfigurationProvider)
 								  .ToListAsync(cancellationToken);
-		
-		return new NoteListVm
+
+		var deb = _context.Notes.ToList();
+
+        return new NoteListVm
 		{
 			Notes = notes
 		};

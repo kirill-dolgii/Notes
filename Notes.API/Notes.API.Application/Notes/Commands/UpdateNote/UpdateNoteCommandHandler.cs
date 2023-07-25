@@ -16,16 +16,29 @@ public class UpdateNoteCommandHandler : IRequestHandler<UpdateNoteCommand>
 	public async Task Handle(UpdateNoteCommand request, 
 							 CancellationToken cancellationToken)
 	{
-		var note = await _context.Notes.FirstOrDefaultAsync(note => note.Id == request.Id, 
-															cancellationToken);
+		var note = await _context.Notes
+					 .FirstOrDefaultAsync(note => note.UserId == request.UserId && 
+												  note.Id == request.Id, 
+										  cancellationToken);
 		if (note == null || note.UserId != request.UserId)
 		{
 			throw new NotFoundException(nameof(note), request.Id);
 		}
 
+		var category = await _context.Categories
+						 .FirstOrDefaultAsync(c => c.UserId == request.UserId &&
+												   c.Id == request.CategoryId,
+											  cancellationToken);
+
+		if (category == null)
+		{
+			throw new NotFoundException(nameof(category), request.CategoryId);
+		}
+
 		note.Title = request.Title;
 		note.Description = request.Description;
-		note.Category = request.Category;
+		note.CategoryId = category.Id;
+		note.Category = category;
 		note.Tags = request.Tags;
 		note.EditionTime = DateTime.Now;
 

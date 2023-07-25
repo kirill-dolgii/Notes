@@ -3,6 +3,7 @@ using Notes.API.Application.Interfaces;
 using Notes.API.Persistence;
 using System.Reflection;
 using Notes.API.Application;
+using Notes.API.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,12 +50,59 @@ try
 {
 	var context = serviceProvider.GetRequiredService<NotesDbContext>();
 	DbInitializer.Initialize(context);
+	if (app.Environment.IsDevelopment())
+	{
+		var testCategories = new List<Category>
+		{
+			new()
+			{
+				Name = "Empty",
+				Id = Guid.NewGuid(),
+				UserId = Guid.Empty
+			},
+			new()
+			{
+				Name = "Work",
+				Id = Guid.NewGuid(),
+				UserId = Guid.Empty
+			}
+		};
+
+		var testNotes = new List<Note>
+		{
+			new()
+			{
+				UserId = Guid.Empty,
+				Id = Guid.NewGuid(),
+				Title = "Work Note",
+				Description = "-",
+				Category = testCategories[1],
+				CategoryId = testCategories[1].Id,
+				Tags = new List<string>(),
+				CreationTime = DateTime.Now
+			},
+			new()
+			{
+				UserId = Guid.Empty,
+				Id = Guid.NewGuid(),
+				Title = "Empty Note",
+				Description = "-",
+				Category = testCategories[0],
+				CategoryId = testCategories[0].Id,
+				Tags = new List<string>(),
+				CreationTime = DateTime.Now
+			}
+		};
+
+		await context.Notes.AddRangeAsync(testNotes);
+		await context.Categories.AddRangeAsync(testCategories);
+
+		await context.SaveChangesAsync();
+    }
 }
 catch (Exception ex)
 {
 	// ignored
 }
-
-app.MapGet("/", () => "Hello World!");
 
 app.Run();

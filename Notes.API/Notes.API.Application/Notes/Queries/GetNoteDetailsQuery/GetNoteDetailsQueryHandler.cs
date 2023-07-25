@@ -19,7 +19,11 @@ public class GetNoteDetailsQueryHandler : IRequestHandler<GetNoteDetailsQuery, N
 	public async Task<NoteDetailsVm> Handle(GetNoteDetailsQuery request, 
 											CancellationToken cancellationToken)
 	{
-		var note = await _context.Notes.FirstOrDefaultAsync(note => note.Id == request.Id, cancellationToken);
+		var note = await _context.Notes
+					.Include(note => note.Category)
+					.FirstOrDefaultAsync(note => note.UserId == request.UserId && 
+												 note.Id == request.Id, cancellationToken);
+		
 		if (note == null || note.UserId != request.UserId)
 		{
 			throw new NotFoundException(nameof(note), request.Id);

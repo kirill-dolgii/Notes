@@ -1,26 +1,9 @@
 ﻿namespace Notes.API.Domain;
 
-public enum Category
+public class Category
 {
-	Empty,
-	Personal,
-	Work,
-	School,
-	Travel,
-	HealthAndFitness,
-	Financial,
-	Recipes,
-	Books,
-	Movies,
-	Shopping,
-	Ideas,
-	Inspirational,
-	Goals,
-	Events,
-	Projects,
-	Family,
-	Friends,
-	Hobbies,
-	Music,
-	Miscellaneous
+    public Guid UserId { get; set; }
+    public Guid   Id     { get; set; }
+	public string Name   { get; set; }
+    public ICollection<Note> Notes { get; set; }
 }

@@ -9,7 +9,8 @@ public class NoteDetailsVm : IMapWith<Note>
 	public Guid                Id           { get; set; }
 	public string              Title        { get; set; }
 	public string              Description  { get; set; }
-	public string            Category     { get; set; }
+	public Guid                CategoryId   { get; set; }
+	public string              CategoryName { get; set; }
 	public ICollection<string> Tags         { get; set; }
 	public DateTime            CreationTime { get; set; }
 	public DateTime?           EditionTime  { get; set; }
@@ -17,8 +18,8 @@ public class NoteDetailsVm : IMapWith<Note>
 
 	public void Mapping(Profile profile)
 	{
-		profile.CreateMap<NoteDetailsVm, Note>()
-			   .ForMember(note => note.Category, ops => ops.MapFrom(vm => Enum.Parse<Domain.Category>(Category)))
-			   .ReverseMap();
+		profile.CreateMap<Note, NoteDetailsVm>()
+			   .ForMember(vm => vm.CategoryName, 
+						  ops => ops.MapFrom(note => note.Category.Name));
 	}
 }

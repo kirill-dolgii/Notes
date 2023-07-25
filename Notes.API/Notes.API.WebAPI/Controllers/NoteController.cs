@@ -6,6 +6,7 @@ using Notes.API.Application.Notes.Commands.DeleteNoteCommand;
 using Notes.API.Application.Notes.Commands.UpdateNote;
 using Notes.API.Application.Notes.Queries.GetNoteDetailsQuery;
 using Notes.API.Application.Notes.Queries.GetNotesListQuery;
+
 using Notes.API.WebAPI.Models;
 
 namespace Notes.API.WebAPI.Controllers;
@@ -13,13 +14,9 @@ namespace Notes.API.WebAPI.Controllers;
 [Route("api/[controller]")]
 public class NoteController : BaseController
 {
-	private readonly IMapper _mapper;
-	public NoteController(IMapper mapper, IMediator mediator) : base(mediator)
-	{
-		_mapper = mapper;
-	}
+	public NoteController(IMediator mediator, IMapper mapper) : base(mediator, mapper) { }
 
-	[HttpGet]
+    [HttpGet]
 	public async Task<ActionResult<NoteListVm>> GetAll()
 	{
 		var request = new GetNotesListQuery
@@ -39,37 +36,41 @@ public class NoteController : BaseController
 			Id = noteId
 		};
 
-		NoteDetailsVm response;
-
 		try
 		{
-			response = await Mediator.Send(request);
+			var response = await Mediator.Send(request);
+			return Ok(response);
 		}
 		catch (Exception ex)
 		{
 			return BadRequest(ex.Message);
 		}
-
-		return response;
 	}
 
 	[HttpPost]
 	public async Task<ActionResult<Guid>> CreateNote([FromBody] CreateNoteDto createNoteDto)
 	{
-		var command = _mapper.Map<CreateNoteCommand>(createNoteDto);
+        var command = Mapper.Map<CreateNoteCommand>(createNoteDto);
 		command.UserId = UserId;
-		var response = await Mediator.Send(command);
-		return Ok(response);
+		try
+		{
+			var response = await Mediator.Send(command);
+			return Ok(response);
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 
 	[HttpPut]
 	public async Task<ActionResult> Update([FromBody] UpdateNoteDto updateNoteDto)
 	{
-		var command  = _mapper.Map<UpdateNoteCommand>(updateNoteDto);
-		command.UserId = UserId;
+		var request  = Mapper.Map<UpdateNoteCommand>(updateNoteDto);
+		request.UserId = UserId;
 		try
 		{
-			await Mediator.Send(command);
+			await Mediator.Send(request);
 			return NoContent();
 		}
 		catch (Exception ex)
@@ -81,11 +82,11 @@ public class NoteController : BaseController
 	[HttpDelete("{noteId}")]
 	public async Task<ActionResult> Delete(Guid noteId)
 	{
-		var command = new DeleteNoteCommand()
+		var command = new DeleteNoteCommand
 		{
-			Id = noteId
+			Id = noteId,
+			UserId = UserId
 		};
-		command.UserId = UserId;
 
 		try
 		{
